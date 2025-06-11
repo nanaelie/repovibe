@@ -1,110 +1,106 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { useEffect, useState } from "react";
+import { View, Text, Image, ScrollView, StyleSheet, TouchableOpacity, Linking } from "react-native";
+import { useTheme } from '@/contexts/ThemeContext';
+import cover from '@/assets/images/cover.jpg';
+import avatar from '@/assets/images/avatar.jpg';
 
-import { Collapsible } from '@/components/Collapsible';
-import { ExternalLink } from '@/components/ExternalLink';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+const ProfileScreen = () => {
+	const [remaining, setRemaining] = useState<number>(0);
+	const { colors } = useTheme();
 
-export default function TabTwoScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
-      headerImage={
-        <IconSymbol
-          size={310}
-          color="#808080"
-          name="chevron.left.forwardslash.chevron.right"
-          style={styles.headerImage}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Explore</ThemedText>
-      </ThemedView>
-      <ThemedText>This app includes example code to help you get started.</ThemedText>
-      <Collapsible title="File-based routing">
-        <ThemedText>
-          This app has two screens:{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">app/(tabs)/explore.tsx</ThemedText>
-        </ThemedText>
-        <ThemedText>
-          The layout file in <ThemedText type="defaultSemiBold">app/(tabs)/_layout.tsx</ThemedText>{' '}
-          sets up the tab navigator.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/router/introduction">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Android, iOS, and web support">
-        <ThemedText>
-          You can open this project on Android, iOS, and the web. To open the web version, press{' '}
-          <ThemedText type="defaultSemiBold">w</ThemedText> in the terminal running this project.
-        </ThemedText>
-      </Collapsible>
-      <Collapsible title="Images">
-        <ThemedText>
-          For static images, you can use the <ThemedText type="defaultSemiBold">@2x</ThemedText> and{' '}
-          <ThemedText type="defaultSemiBold">@3x</ThemedText> suffixes to provide files for
-          different screen densities
-        </ThemedText>
-        <Image source={require('@/assets/images/react-logo.png')} style={{ alignSelf: 'center' }} />
-        <ExternalLink href="https://reactnative.dev/docs/images">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Custom fonts">
-        <ThemedText>
-          Open <ThemedText type="defaultSemiBold">app/_layout.tsx</ThemedText> to see how to load{' '}
-          <ThemedText style={{ fontFamily: 'SpaceMono' }}>
-            custom fonts such as this one.
-          </ThemedText>
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/versions/latest/sdk/font">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Light and dark mode components">
-        <ThemedText>
-          This template has light and dark mode support. The{' '}
-          <ThemedText type="defaultSemiBold">useColorScheme()</ThemedText> hook lets you inspect
-          what the user&apos;s current color scheme is, and so you can adjust UI colors accordingly.
-        </ThemedText>
-        <ExternalLink href="https://docs.expo.dev/develop/user-interface/color-themes/">
-          <ThemedText type="link">Learn more</ThemedText>
-        </ExternalLink>
-      </Collapsible>
-      <Collapsible title="Animations">
-        <ThemedText>
-          This template includes an example of an animated component. The{' '}
-          <ThemedText type="defaultSemiBold">components/HelloWave.tsx</ThemedText> component uses
-          the powerful <ThemedText type="defaultSemiBold">react-native-reanimated</ThemedText>{' '}
-          library to create a waving hand animation.
-        </ThemedText>
-        {Platform.select({
-          ios: (
-            <ThemedText>
-              The <ThemedText type="defaultSemiBold">components/ParallaxScrollView.tsx</ThemedText>{' '}
-              component provides a parallax effect for the header image.
-            </ThemedText>
-          ),
-        })}
-      </Collapsible>
-    </ParallaxScrollView>
-  );
-}
+	  useEffect(() => {
+		fetch("https://api.github.com/rate_limit")
+		  .then((response) => response.json())
+		  .then((data) => setRemaining(data.rate.remaining))
+		  .catch((error) => console.error("Erreur:", error));
+	  }, []);
+
+	return (
+		<ScrollView contentContainerStyle={[styles.container,{backgroundColor: colors.background}]}>
+			<View style={styles.coverContainer}>
+				<Image source={cover} style={styles.coverImage} />
+				<Image source={avatar} style={styles.avatar} />
+			</View>
+			<Text style={styles.name}>{"Nana Elie"}</Text>
+			<Text style={styles.location}>{"Burkina Faso / Bobo Dioulasso"}</Text>
+			<Text style={styles.description}>Passionné par les technologies modernes, Nana Elie développe des projets innovants en alliant rigueur, curiosité et créativité. 🌟</Text>
+			<Text style={styles.description}>Développeur indépendant avec plus de 3 ans d'expérience en C/C++, Python, JavaScript, React Native, HTML et CSS.</Text>			
+			<Text style={styles.description}>Je crée des sites web dynamiques et réactifs, en intégrant des fonctionnalités interactives, une mise en page responsive, et une expérience utilisateur optimale. J'optimise aussi les performances pour garantir la fluidité des sites. Je maîtrise aussi l'administration des systèmes comme Windows, Ubuntu, et Kali Linux, et je propose des solutions techniques adaptées aux besoins de mes clients.</Text>
+		
+			<View style={styles.remaining}>
+				<Text style={styles.remaining.remaining}>{`Remainig ${remaining} ${remaining > 1 ? 'calls' : 'call'}`}</Text>
+			</View>
+		</ScrollView>
+	);
+};
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: '#808080',
-    bottom: -90,
-    left: -35,
-    position: 'absolute',
-  },
-  titleContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
+	container: {
+		alignItems: "center",
+		backgroundColor: "#f2f2f2",
+		width: '100%',
+		minHeight: '100%',
+	},
+	loadingContainer: {
+		flex: 1,
+		justifyContent: "center",
+		alignItems: "center",
+		backgroundColor: "#f2f2f2",
+	},
+	coverContainer: {
+		width: "100%",
+		height: 180,
+		backgroundColor: "#ccc",
+		position: "relative",
+		marginBottom: 60,
+	},
+	coverImage: {
+		width: "100%",
+		height: "100%",
+	},
+	avatar: {
+		width: 120,
+		height: 120,
+		borderRadius: 60,
+		borderWidth: 3,
+		borderColor: "#fff",
+		position: "absolute",
+		bottom: -60,
+		alignSelf: "center",
+		backgroundColor: "#fff",
+	},
+	name: {
+		fontSize: 24,
+		fontWeight: "bold",
+		color: "#333",
+		marginTop: 15,
+		textAlign: "center",
+		fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
+	},
+	location: {
+		fontSize: 16,
+		color: "#555",
+		marginTop: 0,
+		textAlign: "center",
+		fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
+	},
+	description: {
+		fontSize: 14.5,
+		marginTop: 12,
+		marginHorizontal: 20,
+		textAlign: "center",
+		color: '#ffffff',
+		fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
+	},
+	remaining: {
+		marginVertical: 20,
+		remaining: {
+			color: '#424242',
+			fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif",
+			fontSize: 17,
+			fontWeight: 'bold',
+		},
+	},
 });
+	
+export default ProfileScreen;
