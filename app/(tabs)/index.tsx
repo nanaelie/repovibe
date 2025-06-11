@@ -28,50 +28,6 @@ const Dashboard = () => {
 		const [fontsLoaded] = useFonts({
 			'PPAgrandir-Thin': require('@/assets/fonts/PPAgrandir-Thin.ttf'),
 		});
-		
-		/*
-		useEffect(() => {
-			fetch('https://api.github.com/users/nanaelie/repos')
-				.then(response => response.json())
-				.then(data => {
-					if (Array.isArray(data)) {
-						const cleanedData = data.map((repo: any) => ({
-							id: repo.id,
-							name: repo.name,
-							description: repo.description,
-							language: repo.language,
-							forks: repo.forks,
-							open_issues: repo.open_issues,
-							watchers: repo.subscribers_coun,
-							stargazers_count: repo.stargazers_count,
-							html_url: repo.html_url,
-							license: repo.license?.name?.length > 8 ? repo.license?.spdx_id : repo.license?.name
-						}));
-						setRepos(cleanedData);
-						setLoading(false);
-						setError(false);
-					} else {
-						throw new Error('Invalid response');
-						setError(true);
-						setLoading(false);
-					}
-				})
-				.catch((error) => {
-					console.error('Erreur:', error);
-					
-					const repos_ = JSON.parse(localStorage.getItem('repos'));
-					if (repos_.length > 0) {
-						setRepos(repos_);
-						setLoading(false);
-						setError(false);
-					}else{
-						setError(true);
-						setLoading(false);
-					}
-				});
-		}, []);
-		*/
-		
 		useEffect(() => {
 	const fetchRepos = async () => {
 		try {
@@ -82,7 +38,6 @@ const Dashboard = () => {
 
 			const cleanedData = await Promise.all(
 				data.map(async (repo: any) => {
-					// Récupérer les watchers réels via subscribers_url
 					let realWatchers = 0;
 					try {
 						const subResp = await fetch(repo.subscribers_url);
